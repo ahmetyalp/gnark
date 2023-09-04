@@ -13,6 +13,7 @@ import (
 	fr_bn254 "github.com/consensys/gnark-crypto/ecc/bn254/fr"
 	fr_bw6633 "github.com/consensys/gnark-crypto/ecc/bw6-633/fr"
 	fr_bw6761 "github.com/consensys/gnark-crypto/ecc/bw6-761/fr"
+	fr_secq256k1 "github.com/consensys/gnark-crypto/ecc/secq256k1/fr"
 	"github.com/consensys/gnark/internal/tinyfield"
 	"github.com/consensys/gnark/internal/utils"
 )
@@ -37,6 +38,8 @@ func newVector(field *big.Int, size int) (any, error) {
 	default:
 		if field.Cmp(tinyfield.Modulus()) == 0 {
 			return make(tinyfield.Vector, size), nil
+		} else if field.Cmp(ecc.SECQ256K1.ScalarField()) == 0 {
+			return make(fr_secq256k1.Vector, size), nil
 		} else {
 			return nil, errors.New("unsupported modulus")
 		}
@@ -77,6 +80,10 @@ func newFrom(from any, n int) (any, error) {
 		a := make(tinyfield.Vector, n)
 		copy(a, wt)
 		return a, nil
+	case fr_secq256k1.Vector:
+		a := make(fr_secq256k1.Vector, n)
+		copy(a, wt)
+		return a, nil
 	default:
 		return nil, errors.New("unsupported modulus")
 	}
@@ -100,6 +107,8 @@ func leafType(v any) reflect.Type {
 		return reflect.TypeOf(fr_bw6633.Element{})
 	case tinyfield.Vector:
 		return reflect.TypeOf(tinyfield.Element{})
+	case fr_secq256k1.Vector:
+		return reflect.TypeOf(fr_secq256k1.Element{})
 	default:
 		panic("invalid input")
 	}
@@ -150,6 +159,12 @@ func set(v any, index int, value any) error {
 		_, err := pv[index].SetInterface(value)
 		return err
 	case tinyfield.Vector:
+		if index >= len(pv) {
+			return errors.New("out of bounds")
+		}
+		_, err := pv[index].SetInterface(value)
+		return err
+	case fr_secq256k1.Vector:
 		if index >= len(pv) {
 			return errors.New("out of bounds")
 		}
@@ -219,6 +234,13 @@ func iterate(v any) chan any {
 			}
 			close(chValues)
 		}()
+	case fr_secq256k1.Vector:
+		go func() {
+			for i := 0; i < len(pv); i++ {
+				chValues <- &(pv)[i]
+			}
+			close(chValues)
+		}()
 	default:
 		panic("invalid input")
 	}
@@ -243,6 +265,8 @@ func resize(v any, n int) any {
 		return make(fr_bw6633.Vector, n)
 	case tinyfield.Vector:
 		return make(tinyfield.Vector, n)
+	case fr_secq256k1.Vector:
+		return make(fr_secq256k1.Vector, n)
 	default:
 		panic("invalid input")
 	}

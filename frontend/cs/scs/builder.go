@@ -40,6 +40,7 @@ import (
 	bn254r1cs "github.com/consensys/gnark/constraint/bn254"
 	bw6633r1cs "github.com/consensys/gnark/constraint/bw6-633"
 	bw6761r1cs "github.com/consensys/gnark/constraint/bw6-761"
+	secq256k1rcs "github.com/consensys/gnark/constraint/secq256k1"
 	"github.com/consensys/gnark/constraint/solver"
 	tinyfieldr1cs "github.com/consensys/gnark/constraint/tinyfield"
 )
@@ -109,6 +110,9 @@ func newBuilder(field *big.Int, config frontend.CompileConfig) *builder {
 	default:
 		if field.Cmp(tinyfield.Modulus()) == 0 {
 			b.cs = tinyfieldr1cs.NewSparseR1CS(config.Capacity)
+			break
+		} else if field.Cmp(ecc.SECQ256K1.ScalarField()) == 0 {
+			b.cs = secq256k1rcs.NewSparseR1CS(config.Capacity)
 			break
 		}
 		panic("not implemented")

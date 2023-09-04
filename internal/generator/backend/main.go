@@ -68,6 +68,13 @@ func main() {
 		CurveID:   "UNKNOWN",
 		noBackend: true,
 	}
+	secq256k1 := templateData{
+		RootPath:  "../../../internal/secq256k1",
+		CSPath:    "../../../constraint/secq256k1",
+		Curve:     "secq256k1",
+		CurveID:   "SECQ256K1",
+		noBackend: true,
+	}
 
 	// autogenerate tinyfield
 	tinyfieldConf, err := config.NewFieldConfig("tinyfield", "Element", "0x2f", false)
@@ -87,6 +94,7 @@ func main() {
 		bls24_317,
 		bw6_633,
 		tiny_field,
+		secq256k1,
 	}
 
 	const importCurve = "../imports.go.tmpl"

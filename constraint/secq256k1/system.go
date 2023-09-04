@@ -30,7 +30,7 @@ import (
 
 	"github.com/consensys/gnark-crypto/ecc"
 
-	"github.com/consensys/gnark-crypto/ecc/bn254/fr"
+	"github.com/consensys/gnark-crypto/ecc/secq256k1/fr"
 )
 
 type R1CS = system
@@ -43,14 +43,10 @@ type system struct {
 	field
 }
 
-// NewR1CS is a constructor for R1CS. It is meant to be use by gnark frontend only,
-// and should not be used by gnark users. See groth16.NewCS(...) instead.
 func NewR1CS(capacity int) *R1CS {
 	return newSystem(capacity, constraint.SystemR1CS)
 }
 
-// NewSparseR1CS is a constructor for SparseR1CS. It is meant to be use by gnark frontend only,
-// and should not be used by gnark users. See plonk.NewCS(...) instead.
 func NewSparseR1CS(capacity int) *SparseR1CS {
 	return newSystem(capacity, constraint.SystemSparseR1CS)
 }
@@ -153,7 +149,7 @@ func (cs *system) GetNbCoefficients() int {
 
 // CurveID returns curve ID as defined in gnark-crypto
 func (cs *system) CurveID() ecc.ID {
-	return ecc.BN254
+	return ecc.SECQ256K1
 }
 
 // WriteTo encodes R1CS into provided io.Writer using cbor

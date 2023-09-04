@@ -25,6 +25,7 @@ import (
 	bn254 "github.com/consensys/gnark-crypto/ecc/bn254/fr/mimc"
 	bw6633 "github.com/consensys/gnark-crypto/ecc/bw6-633/fr/mimc"
 	bw6761 "github.com/consensys/gnark-crypto/ecc/bw6-761/fr/mimc"
+	secq256k1 "github.com/consensys/gnark-crypto/ecc/secq256k1/fr/mimc"
 
 	"github.com/consensys/gnark/frontend"
 )
@@ -41,6 +42,7 @@ func init() {
 	encryptFuncs[ecc.BW6_633] = encryptPow5
 	encryptFuncs[ecc.BLS24_315] = encryptPow5
 	encryptFuncs[ecc.BLS24_317] = encryptPow7
+	encryptFuncs[ecc.SECQ256K1] = encryptPow5
 
 	newMimc = make(map[ecc.ID]func(frontend.API) MiMC)
 	newMimc[ecc.BN254] = newMimcBN254
@@ -50,6 +52,7 @@ func init() {
 	newMimc[ecc.BW6_633] = newMimcBW633
 	newMimc[ecc.BLS24_315] = newMimcBLS315
 	newMimc[ecc.BLS24_317] = newMimcBLS317
+	newMimc[ecc.SECQ256K1] = newMimcSecq256k1
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -113,6 +116,15 @@ func newMimcBW633(api frontend.API) MiMC {
 	res := MiMC{}
 	res.params = bw6633.GetConstants()
 	res.id = ecc.BW6_633
+	res.h = 0
+	res.api = api
+	return res
+}
+
+func newMimcSecq256k1(api frontend.API) MiMC {
+	res := MiMC{}
+	res.params = secq256k1.GetConstants()
+	res.id = ecc.SECQ256K1
 	res.h = 0
 	res.api = api
 	return res
