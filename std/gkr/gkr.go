@@ -562,8 +562,26 @@ func (a AddGate) Degree() int {
 	return 1
 }
 
+type SubGate struct{}
+
+func (SubGate) Evaluate(api frontend.API, v ...frontend.Variable) frontend.Variable {
+	switch len(v) {
+	case 0:
+		return 0
+	case 1:
+		return v[0]
+	}
+	rest := v[2:]
+	return api.Sub(v[0], v[1], rest...)
+}
+
+func (SubGate) Degree() int {
+	return 1
+}
+
 var Gates = map[string]Gate{
 	"identity": IdentityGate{},
 	"add":      AddGate{},
 	"mul":      MulGate{},
+	"sub":      SubGate{},
 }
