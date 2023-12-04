@@ -67,6 +67,7 @@ func main() {
 		Curve:     "tinyfield",
 		CurveID:   "UNKNOWN",
 		noBackend: true,
+		NoGKR:     true,
 	}
 	secq256k1 := templateData{
 		RootPath:  "../../../internal/secq256k1",
@@ -243,4 +244,5 @@ type templateData struct {
 	Curve     string
 	CurveID   string
 	noBackend bool
+	NoGKR     bool
 }

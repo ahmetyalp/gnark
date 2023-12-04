@@ -65,13 +65,6 @@ func (cs *system) Solve(witness witness.Witness, opts ...csolver.Option) (any, e
 	log := logger.Logger().With().Int("nbConstraints", cs.GetNbConstraints()).Logger()
 	start := time.Now()
 
-	if cs.GkrInfo.Is() {
-		var gkrData GkrSolvingData
-		opts = append(opts,
-			csolver.OverrideHint(cs.GkrInfo.SolveHintID, GkrSolveHint(cs.GkrInfo, &gkrData)),
-			csolver.OverrideHint(cs.GkrInfo.ProveHintID, GkrProveHint(cs.GkrInfo.HashName, &gkrData)))
-	}
-
 	v := witness.Vector().(fr.Vector)
 
 	// init the solver
