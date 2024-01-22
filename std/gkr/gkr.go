@@ -2,11 +2,12 @@ package gkr
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/consensys/gnark/frontend"
 	fiatshamir "github.com/consensys/gnark/std/fiat-shamir"
 	"github.com/consensys/gnark/std/polynomial"
 	"github.com/consensys/gnark/std/sumcheck"
-	"strconv"
 )
 
 // @tabaie TODO: Contains many things copy-pasted from gnark-crypto. Generify somehow?
@@ -339,10 +340,11 @@ func Verify(api frontend.API, c Circuit, assignment WireAssignment, proof Proof,
 			}
 		} else if err = sumcheck.Verify(
 			api, claim, proof[i], fiatshamir.WithTranscript(o.transcript, wirePrefix+strconv.Itoa(i)+".", baseChallenge...),
-		); err != nil {
+		); err == nil {
+			baseChallenge = finalEvalProof
+		} else {
 			return err
 		}
-		baseChallenge = finalEvalProof
 		claims.deleteClaim(wire)
 	}
 	return nil
